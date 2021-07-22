@@ -1,4 +1,7 @@
 import seq_tools
 
-fasta = seq_tools.parse_fasta("test_data/sequence.fasta")
-print(list(fasta))
+test = seq_tools.fasta("./test_data/sequence.fasta")
+
+test.find_orfs(10)
+
+#print(test.orfs[0])
