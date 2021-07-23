@@ -17,18 +17,15 @@ class fasta:
         """
         print("Finding ORFs...")
         orfs = []
-        for strand, nuc in [(+1, self.seq), (-1, self.seq.reverse_complement())]:
+
+        for strand, nucs in [(+1, self.seq), (-1, self.seq.reverse_complement())]:
             for frame in range(3):
                 length = 3 * ((self.length-frame) // 3)
-                test_seq = str(nuc[frame:frame+length])
+                query_seq = str(nucs[frame:frame+length].translate())
 
-                print(re.findall("(?:(?!TAG|TAA|TGA)[A-SU-Z])+(?=TAG|TAA|TGA)", test_seq))
+                peptides = re.findall("M[^\*]+\*", query_seq)  
+                peptides = [ Seq.Seq(peptide) for peptide in peptides if len(peptide) >= min_length ]
+                orfs += peptides
 
-
-
-        for orf in orfs:
-            print(orfs)
-        
-
-        print(f"Found {len(orfs)} ORFs in input fasta")
-                    
+        print(f"Found {len(orfs)} orfs!")
+        self.orfs = orfs
