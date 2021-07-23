@@ -25,7 +25,7 @@ class fasta:
                 length = 3 * ((self.length-frame) // 3)
                 query_seq = str(nucs[frame:frame+length].translate())
 
-                peptides = re.findall("M[^\*]+\*", query_seq)  
+                peptides = re.findall("M[^\*]+\*", query_seq)
                 peptides = [ Seq(peptide) for peptide in peptides if len(peptide) >= min_length ]
                 orfs += peptides
 
