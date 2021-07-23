@@ -1,4 +1,6 @@
-from Bio import SeqIO, Seq
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+from Bio import SeqIO
 import re
 
 class fasta:
@@ -24,8 +26,18 @@ class fasta:
                 query_seq = str(nucs[frame:frame+length].translate())
 
                 peptides = re.findall("M[^\*]+\*", query_seq)  
-                peptides = [ Seq.Seq(peptide) for peptide in peptides if len(peptide) >= min_length ]
+                peptides = [ Seq(peptide) for peptide in peptides if len(peptide) >= min_length ]
                 orfs += peptides
 
         print(f"Found {len(orfs)} orfs!")
         self.orfs = orfs
+        return self.orfs
+
+    def write_orf_fastas(self, path):
+        for i, orf in enumerate(self.orfs):
+            record = SeqRecord(
+                orf,
+                id=f"ORF_{i}",
+                name=f"ORF_{i}")
+            SeqIO.write(record, f"{path}/ORF_{i}.fasta", "fasta")
+        print(f"Wrote {len(self.orfs)} ORFs to .fasta")
