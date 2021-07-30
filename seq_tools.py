@@ -34,10 +34,10 @@ class fasta:
         return self.orfs
 
     def write_orf_fastas(self, path):
-        for i, orf in enumerate(self.orfs):
+        for n, orf in enumerate(self.orfs):
             record = SeqRecord(
                 orf,
-                id=f"ORF_{i}",
-                name=f"ORF_{i}")
-            SeqIO.write(record, f"{path}/ORF_{i}.fasta", "fasta")
-        print(f"Wrote {len(self.orfs)} ORFs to .fasta")
+                id=f"ORF_{n}",
+                name=f"ORF_{n}")
+            SeqIO.write(record, f"{path}/ORF_{n}.fasta", "fasta")
+        print(f"Wrote {len(self.orfs)} ORFs to {path}/ORF_{{n}}.fasta")
