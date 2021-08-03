@@ -1,6 +1,8 @@
 import pandas as pd
 from matplotlib import pyplot as plt
-import Bio.PDB as pdb
+from Bio.PDB import PDBParser
+from Bio.PDB.PDBIO import PDBIO
+
 
 class result:
     def __init__(self, path):
@@ -27,11 +29,12 @@ class result:
         plt.show()
 
     def get_models(self):
-        parser = pdb.PDBParser()
+        parser = PDBParser()
         self.models = [ parser.get_structure(f"ranked_{i}", f"{self.path}/ranked_{i}.pdb") for i in range(5) ]
         return self.models
 
     def write_bfactors(self):
+        self.get_results()
         self.get_plddts()
         self.get_models()
         
@@ -39,3 +42,8 @@ class result:
             for j, residue in enumerate(model.get_residues()):
                 for atom in residue.get_atoms():
                     atom.bfactor = self.plddts[i][j]
+
+        io = PDBIO()
+        for i, model in enumerate(self.models):
+            io.set_structure(model)
+            io.save(f"./test_data/models/ranked_{i}_plddts.pdb")

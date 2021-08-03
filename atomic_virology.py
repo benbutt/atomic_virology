@@ -1,4 +1,3 @@
-import model_tools
 import seq_tools
 import result_tools
 
@@ -14,16 +13,7 @@ sars_cov_2.write_orf_fastas("./test_data/ORFs")
 ### RESULT_TOOLS TESTING ###
 """
 test = result_tools.result("./test_data/ul51")
-test.get_results()
-
-test.get_plddts()
-test.get_models()
 test.write_bfactors()
-
-for model in test.models:
-    for atom in model.get_atoms():
-        print(atom.bfactor)
-
 
 """
 ### MODEL_TOOLS TESTING ###
