@@ -15,8 +15,15 @@ sars_cov_2.write_orf_fastas("./test_data/ORFs")
 """
 test = result_tools.result("./test_data/ul51")
 test.get_results()
+
 test.get_plddts()
-test.plot_plddts()
+test.get_models()
+test.write_bfactors()
+
+for model in test.models:
+    for atom in model.get_atoms():
+        print(atom.bfactor)
+
 
 """
 ### MODEL_TOOLS TESTING ###
