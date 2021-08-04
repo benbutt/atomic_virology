@@ -87,7 +87,7 @@ class result:
         ## Set the b factor column for all atoms in each residue from the relevant pLDDT array
         for i, model in enumerate(self.models): # Iterate through the models
             for j, residue in enumerate(model.get_residues()): # Iterate through the residues from each model
-                for atom in residue.get_atoms(): # Iterare through the atoms from each residue
+                for atom in residue.get_atoms(): # Iterate through the atoms from each residue
                     atom.bfactor = self.plddts[i][j] # Set the B factor of each atom using the pLDDT array from get_plddts()
 
         ## Make a new subdirectory for storing model outputs
