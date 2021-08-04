@@ -99,3 +99,5 @@ class result:
         for i, model in enumerate(self.models): # Iterate through the models
             io.set_structure(model) # Get the current model
             io.save(f"{models_dir}/ranked_{i}_plddts.pdb") # Write each model in models subdirectory
+
+    # TODO: Add MSA parsing including calculation and plotting of per-residue alignment depth
