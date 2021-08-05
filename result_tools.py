@@ -15,6 +15,7 @@ class result:
         Initialises result class with path to AF result directory
         """
         self.path = path
+        print(f"Found result directory at {path}/")
 
     def get_results(self):
         """
@@ -27,10 +28,12 @@ class result:
 
         for raw_file in raw_files: # Iterate through raw files
             shutil.move(raw_file, raw_dir) # Move each file to new subdirectory
+        print(f"Raw AlphaFold output moved to {raw_dir}/")
 
         ## Extract result pickle file for each prediction, parse and return
         result_paths = ( os.path.join(self.path, f"raw_output/result_model_{i}.pkl") for i in range(1,6) ) # Each path is generated on demand
         self.results = [ pd.read_pickle(result_path) for result_path in result_paths ] # Parse each results pickle using Pandas
+        print(f"Parsed {len(self.results)} results files")
         return self.results # Return full contents of results pickle as a list of dictionaries
 
     def get_plddts(self):
@@ -40,6 +43,7 @@ class result:
         """
         ## Extract the pLDDT entry from each results dictionary
         self.plddts = [ result["plddt"] for result in self.results ]
+        print(f"Extracted pLDDT scores from {len(self.results)} results files")
         return self.plddts # Return pLDDT scores as a list of NumPy arrays
 
     def plot_plddts(self):
@@ -67,6 +71,7 @@ class result:
         ## Save the plot
         # TODO: Add save as SVG for Inkscape
         plt.savefig(f"{plots_dir}/pLDDTs.png", dpi=600)
+        print(f"Per-residue pLDDT plot saved to {plots_dir}/pLDDTs.png")
         # plt.show()
 
     def get_models(self):
@@ -77,6 +82,7 @@ class result:
         parser = PDBParser() # Initialise a PDB parser object
         model_paths = ( os.path.join(self.path, f"raw_output/ranked_{i}.pdb") for i in range(5) ) # Generate the model paths on demand
         self.models = [ parser.get_structure(f"ranked_{i}", model_path) for i, model_path in enumerate(model_paths) ] # Parse each model and store as a list of models
+        print(f"Parsed {len(self.models)} models")
         return self.models # Return a list of models
 
     def write_bfactors(self):
@@ -89,7 +95,7 @@ class result:
             for j, residue in enumerate(model.get_residues()): # Iterate through the residues from each model
                 for atom in residue.get_atoms(): # Iterate through the atoms from each residue
                     atom.bfactor = self.plddts[i][j] # Set the B factor of each atom using the pLDDT array from get_plddts()
-
+        print(f"Wrote pLDDT scores to B factor column of {len(self.models)} models")
         ## Make a new subdirectory for storing model outputs
         models_dir = os.path.join(self.path, "models")
         os.makedirs(models_dir, exist_ok=True)
@@ -99,5 +105,6 @@ class result:
         for i, model in enumerate(self.models): # Iterate through the models
             io.set_structure(model) # Get the current model
             io.save(f"{models_dir}/ranked_{i}_plddts.pdb") # Write each model in models subdirectory
+        print(f"Saved {len(self.models)} models with pLDDT scores to {models_dir}")
 
     # TODO: Add MSA parsing including calculation and plotting of per-residue alignment depth
