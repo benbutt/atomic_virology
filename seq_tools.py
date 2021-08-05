@@ -1,7 +1,8 @@
+import os
+import re
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio import SeqIO
-import re
 
 class fasta:
     def __init__(self, path):
@@ -34,6 +35,7 @@ class fasta:
         return self.orfs
 
     def write_orf_fastas(self, path):
+        os.makedirs(path, exist_ok=True)
         for n, orf in enumerate(self.orfs):
             record = SeqRecord(
                 orf,
