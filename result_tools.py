@@ -5,6 +5,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from Bio.PDB import PDBParser
 from Bio.PDB.PDBIO import PDBIO
+from Bio import AlignIO
 
 class result:
     """ 
@@ -69,9 +70,9 @@ class result:
         plt.tight_layout()
 
         ## Save the plot
-        # TODO: Add save as SVG for Inkscape
         plt.savefig(f"{plots_dir}/pLDDTs.png", dpi=600)
-        print(f"Per-residue pLDDT plot saved to {plots_dir}/pLDDTs.png")
+        plt.savefig(f"{plots_dir}/pLDDTs.svg")
+        print(f"Per-residue pLDDT plot saved to {plots_dir}/pLDDTs")
         # plt.show()
 
     def get_models(self):
@@ -107,4 +108,25 @@ class result:
             io.save(f"{models_dir}/ranked_{i}_plddts.pdb") # Write each model in models subdirectory
         print(f"Saved {len(self.models)} models with pLDDT scores to {models_dir}")
 
-    # TODO: Add MSA parsing including calculation and plotting of per-residue alignment depth
+    def get_msas(self):
+        """
+        Parses, stores and returns Mgnify and Uniref90 MSAs from genetic searches
+        Requires: get_results()
+        """
+        msa_dir = os.path.join(self.path, "raw_output/msas/")
+
+        # TODO: Either parse proprietary a3m format or convert (.fasta, .sto?) first
+        # bfd_path = os.path.join(msa_dir, "bfd_uniclust_hits.a3m")
+
+        mgnify_path = os.path.join(msa_dir, "mgnify_hits.sto")
+        uniref90_path = os.path.join(msa_dir, "uniref90_hits.sto")
+
+        self.msas = {
+            #"bfd_hits" : AlignIO.read(bfd_path, "a3m"),
+            "mgnify_hits" : AlignIO.read(mgnify_path, "stockholm"),
+            "uniref90_hits" : AlignIO.read(uniref90_path, "stockholm")
+            }
+
+        return self.msas
+
+    # TODO: Add calculation and plotting of per-residue alignment depth
