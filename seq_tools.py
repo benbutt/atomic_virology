@@ -34,12 +34,13 @@ class fasta:
         self.orfs = orfs
         return self.orfs
 
-    def write_orf_fastas(self, path):
-        os.makedirs(path, exist_ok=True)
+    def write_orf_fastas(self):
+        orfs_path = "./test_data/ORFs"
+        os.makedirs(orfs_path, exist_ok=True)
         for n, orf in enumerate(self.orfs):
             record = SeqRecord(
                 orf,
                 id=f"ORF_{n}",
                 name=f"ORF_{n}")
-            SeqIO.write(record, f"{path}/ORF_{n}.fasta", "fasta")
-        print(f"Wrote {len(self.orfs)} ORFs to {path}/ORF_{{n}}.fasta")
+            SeqIO.write(record, f"{orfs_path}/ORF_{n}.fasta", "fasta")
+        print(f"Wrote {len(self.orfs)} ORFs to {orfs_path}/ORF_{{n}}.fasta")
