@@ -77,7 +77,6 @@ class result:
         plt.savefig(f"{plots_dir}/pLDDTs.png", dpi=600)
         plt.savefig(f"{plots_dir}/pLDDTs.svg")
         print(f"Per-residue pLDDT plot saved to {plots_dir}/pLDDTs")
-        # plt.show()
 
     def get_models(self) -> List[Structure]:
         """
@@ -126,11 +125,60 @@ class result:
         uniref90_path = os.path.join(msa_dir, "uniref90_hits.sto")
 
         self.msas = {
-            #"bfd_hits" : AlignIO.read(bfd_path, "a3m"),
+            #"bfd_hits" : AlignIO.read(bfd_path, "a3m"), # Can't parse A3m currently
             "mgnify_hits" : AlignIO.read(mgnify_path, "stockholm"),
             "uniref90_hits" : AlignIO.read(uniref90_path, "stockholm")
             }
+        
+        print(f"Parsed {len(self.msas)} MSAs")
 
         return self.msas
 
-    # TODO: Add calculation and plotting of per-residue alignment depth
+    def calculate_msa_depths(self) -> Dict[str, List[int]]:
+        """
+        Calculates, stores and returns number of non-zero entries of each column of each alignment from self.msas as a dictionary of lists
+        Requires: get_results(), get_msas()
+        """
+        self.msa_depths = {} # Initialise an empty dictionary to store the msa depth
+        ## Iterate over the alignments in self.msas, calculate and store per-column depth
+        for alignment in self.msas:
+            depths = [] # Initialise an empty list to keep track of the per-column depth
+
+            alignment_array = np.array([list(record) for record in self.msas[alignment]]) # Convert each record in the alignment to a list, and store the list of lists as a numpy array
+
+            for column in alignment_array.T != "-": # Transpose the array to iterate over columns, converting every non-gap entry to True (gaps = False)
+                depths.append(np.count_nonzero(column)) # Count the number of Trues (non-gap characters) in each row (column of orignial alignment)
+
+            self.msa_depths[alignment] = depths # Store the list of per-position depths in the msa_depths dictionary initialised above
+        
+        print(f"Calculated MSA depth for {len(self.msas)} MSAs")
+
+        return self.msa_depths # Return all per-column depth for each msa in self.msas as a dictionary of lists
+
+    def plot_msa_depth(self) -> None:
+        """
+        Plots per-column depth of all alignments in self.msas
+        Requires: get_results(), get_msas(), calculate_msa_depths()
+        """
+        ## Make a new subdirectory for plots if it doesn't already exist
+        plots_dir = os.path.join(self.path, "plots")
+        os.makedirs(plots_dir, exist_ok=True)
+        
+        ## Initialise the plot object
+        fig, ax = plt.subplots()
+
+        ## Do the plotting
+        for msa_depth in self.msa_depths: # Iterate over the stored alignments
+            depths = self.msa_depths[msa_depth] # Grab the per-residue depth
+            ax.plot(range(1, len(depths)+1), depths, label=msa_depth) # Plot the per-residue depth against length of the alignment
+
+        ## Tidy up the plot
+        ax.set_xlabel("Alignment position")
+        ax.set_ylabel("Depth (no. sequences)")
+        plt.legend()
+        plt.tight_layout()
+
+        
+        plt.savefig(f"{plots_dir}/msa_depth.png", dpi=600)
+        plt.savefig(f"{plots_dir}/msa_depth.svg")
+        print(f"MSA depth plot saved to {plots_dir}/msa_depth")

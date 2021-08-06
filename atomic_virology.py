@@ -1,5 +1,7 @@
 import seq_tools
 import result_tools
+import numpy as np
+from matplotlib import pyplot as plt
 
 # ## SEQ_TOOLS TESTING ###
 # sars_cov_2 = seq_tools.fasta("./test_data/sequence.fasta")
@@ -14,3 +16,5 @@ test.plot_plddts()
 test.get_models()
 test.write_bfactors()
 test.get_msas()
+test.calculate_msa_depths()
+test.plot_msa_depth()
