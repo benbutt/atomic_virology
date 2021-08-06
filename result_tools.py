@@ -1,24 +1,28 @@
 import os
 import shutil
+from typing import List, Dict
 from glob import glob
 import pandas as pd
 from matplotlib import pyplot as plt
+from Bio.PDB.Structure import Structure
 from Bio.PDB import PDBParser
 from Bio.PDB.PDBIO import PDBIO
 from Bio import AlignIO
+from Bio.Align import MultipleSeqAlignment
+import numpy as np
 
 class result:
     """ 
     Class for handling raw AlphaFold outputs
     """
-    def __init__(self, path):
+    def __init__(self, path: str) -> None:
         """
         Initialises result class with path to AF result directory
         """
         self.path = path
         print(f"Found result directory at {path}/")
 
-    def get_results(self):
+    def get_results(self) -> List[Dict[str, np.ndarray]]:
         """
         Parses, stores and returns results pickle for each prediction
         """
@@ -37,7 +41,7 @@ class result:
         print(f"Parsed {len(self.results)} results files")
         return self.results # Return full contents of results pickle as a list of dictionaries
 
-    def get_plddts(self):
+    def get_plddts(self) -> List[np.ndarray]:
         """
         Extracts, stores and returns per-residue pLDDT scores from results pickle
         Requires: get_results()
@@ -47,7 +51,7 @@ class result:
         print(f"Extracted pLDDT scores from {len(self.results)} results files")
         return self.plddts # Return pLDDT scores as a list of NumPy arrays
 
-    def plot_plddts(self):
+    def plot_plddts(self) -> None:
         """
         Plots per-residue pLDDT scores
         Requires: get_results(), get_plddts()
@@ -75,7 +79,7 @@ class result:
         print(f"Per-residue pLDDT plot saved to {plots_dir}/pLDDTs")
         # plt.show()
 
-    def get_models(self):
+    def get_models(self) -> List[Structure]:
         """
         Parses, stores and returns ranked models from results directory
         Requires: get_results()
@@ -86,7 +90,7 @@ class result:
         print(f"Parsed {len(self.models)} models")
         return self.models # Return a list of models
 
-    def write_bfactors(self):
+    def write_bfactors(self) -> None:
         """
         Writes out new PDB files with per-residue pLDDT scores in the B factor column
         Requires: get_results(), get_plddts(), get_models()
@@ -108,7 +112,7 @@ class result:
             io.save(f"{models_dir}/ranked_{i}_plddts.pdb") # Write each model in models subdirectory
         print(f"Saved {len(self.models)} models with pLDDT scores to {models_dir}")
 
-    def get_msas(self):
+    def get_msas(self) -> Dict[str, MultipleSeqAlignment]:
         """
         Parses, stores and returns Mgnify and Uniref90 MSAs from genetic searches
         Requires: get_results()
