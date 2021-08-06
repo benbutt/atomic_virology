@@ -1,7 +1,5 @@
 import seq_tools
 import result_tools
-import numpy as np
-from matplotlib import pyplot as plt
 
 # ## SEQ_TOOLS TESTING ###
 # sars_cov_2 = seq_tools.fasta("./test_data/sequence.fasta")
