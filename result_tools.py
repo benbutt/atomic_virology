@@ -1,4 +1,5 @@
 import os
+import subprocess
 import shutil
 from typing import List, Dict
 from glob import glob
@@ -103,6 +104,8 @@ class result:
         ## Make a new subdirectory for storing model outputs
         models_dir = os.path.join(self.path, "models")
         os.makedirs(models_dir, exist_ok=True)
+
+        # TODO: Superimpose all models on ranked_0 before writing out for easier comparison
         
         ## Write out the new models with pLDDT score in B factor column
         io = PDBIO() # Initialise a PDBIO object for writing PDB files
@@ -113,10 +116,19 @@ class result:
 
     def get_msas(self) -> Dict[str, MultipleSeqAlignment]:
         """
-        Parses, stores and returns Mgnify and Uniref90 MSAs from genetic searches
+        Parses, stores and returns BFD, Mgnify, and Uniref90 MSAs from genetic searches
+        Requires "reformat.pl" conversion script from hhsuite to convert a3m format
         Requires: get_results()
         """
         msa_dir = os.path.join(self.path, "raw_output/msas/")
+
+        ## First, convert bfd alignment to .sto format which is easier to parse
+        hhsuite_path = "/home/bgb25/software/hhsuite"
+        reformat_script = os.path.join(hhsuite_path, "scripts/reformat.pl")
+        bfd_a3m_path = os.path.join(msa_dir, "bfd_uniclust_hits.a3m")
+        bfd_sto_path = os.path.join(msa_dir, "bfd_uniclust_hits.sto")
+        subprocess.run([reformat_script, "a3m", "sto", bfd_a3m_path, bfd_sto_path],stdout=subprocess.DEVNULL)
+        print("Converted bfd_uniclust_hits.a3m to Stockholm format")
 
         # TODO: Either parse proprietary a3m format or convert (.fasta, .sto?) first
         # bfd_path = os.path.join(msa_dir, "bfd_uniclust_hits.a3m")
@@ -125,7 +137,7 @@ class result:
         uniref90_path = os.path.join(msa_dir, "uniref90_hits.sto")
 
         self.msas = {
-            #"bfd_hits" : AlignIO.read(bfd_path, "a3m"), # Can't parse A3m currently
+            "bfd_hits" : AlignIO.read(bfd_sto_path, "stockholm"),
             "mgnify_hits" : AlignIO.read(mgnify_path, "stockholm"),
             "uniref90_hits" : AlignIO.read(uniref90_path, "stockholm")
             }
@@ -170,15 +182,21 @@ class result:
         ## Do the plotting
         for msa_depth in self.msa_depths: # Iterate over the stored alignments
             depths = self.msa_depths[msa_depth] # Grab the per-residue depth
-            ax.plot(range(1, len(depths)+1), depths, label=msa_depth) # Plot the per-residue depth against length of the alignment
+            ax.scatter(
+                x = range(1, len(depths)+1),
+                y = depths,
+                s = 4,
+                label=msa_depth
+                )
 
+            # TODO: Sliding window averaging to smooth plot?
+            
         ## Tidy up the plot
         ax.set_xlabel("Alignment position")
         ax.set_ylabel("Depth (no. sequences)")
         plt.legend()
         plt.tight_layout()
 
-        
         plt.savefig(f"{plots_dir}/msa_depth.png", dpi=600)
         plt.savefig(f"{plots_dir}/msa_depth.svg")
         print(f"MSA depth plot saved to {plots_dir}/msa_depth")
