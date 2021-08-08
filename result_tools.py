@@ -71,6 +71,7 @@ class result:
         ## Tidy up the plot
         ax.set_xlabel("Residue number")
         ax.set_ylabel("pLDDT")
+        ax.set_ylim(0,100)
         plt.legend()
         plt.tight_layout()
 
@@ -122,6 +123,7 @@ class result:
         """
         msa_dir = os.path.join(self.path, "raw_output/msas/")
 
+        # TODO: Wrap this in its own function
         ## First, convert bfd alignment to .sto format which is easier to parse
         hhsuite_path = "/home/bgb25/software/hhsuite"
         reformat_script = os.path.join(hhsuite_path, "scripts/reformat.pl")
@@ -129,9 +131,6 @@ class result:
         bfd_sto_path = os.path.join(msa_dir, "bfd_uniclust_hits.sto")
         subprocess.run([reformat_script, "a3m", "sto", bfd_a3m_path, bfd_sto_path],stdout=subprocess.DEVNULL)
         print("Converted bfd_uniclust_hits.a3m to Stockholm format")
-
-        # TODO: Either parse proprietary a3m format or convert (.fasta, .sto?) first
-        # bfd_path = os.path.join(msa_dir, "bfd_uniclust_hits.a3m")
 
         mgnify_path = os.path.join(msa_dir, "mgnify_hits.sto")
         uniref90_path = os.path.join(msa_dir, "uniref90_hits.sto")
