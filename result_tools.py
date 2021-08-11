@@ -20,8 +20,9 @@ class result:
         """
         Initialises result class with path to AF result directory
         """
-        self.path = path
-        print(f"Found result directory at {path}/")
+        print(path)
+        self.path = os.path.realpath(path)
+        print(f"Found result directory at {self.path}/")
 
     def get_results(self) -> List[Dict[str, np.ndarray]]:
         """
@@ -115,28 +116,39 @@ class result:
             io.save(f"{models_dir}/ranked_{i}_plddts.pdb") # Write each model in models subdirectory
         print(f"Saved {len(self.models)} models with pLDDT scores to {models_dir}")
 
+    def convert_a3m(self, infile, outfile) -> None:
+        """
+        Converts alignment from .a3m to .sto format which is easier to parse
+        Requires "reformat.pl" conversion script from hhsuite to convert a3m format
+        """
+        hhsuite_path = "/usr/local/xtal/hhsuite"
+        reformat_script = os.path.join(hhsuite_path, "scripts/reformat.pl")
+
+        subprocess.run([reformat_script, "a3m", "sto", infile, outfile],stdout=subprocess.DEVNULL)
+        print(f"Converted {infile} to Stockholm format")
+
     def get_msas(self) -> Dict[str, MultipleSeqAlignment]:
         """
         Parses, stores and returns BFD, Mgnify, and Uniref90 MSAs from genetic searches
         Requires "reformat.pl" conversion script from hhsuite to convert a3m format
         Requires: get_results()
         """
+        ## Locate MSA directory
         msa_dir = os.path.join(self.path, "raw_output/msas/")
 
-        # TODO: Wrap this in its own function
-        ## First, convert bfd alignment to .sto format which is easier to parse
-        hhsuite_path = "/home/bgb25/software/hhsuite"
-        reformat_script = os.path.join(hhsuite_path, "scripts/reformat.pl")
+        ## Convert bfd_uniclust_hits from .a3m to .sto format, which is easier to parse
         bfd_a3m_path = os.path.join(msa_dir, "bfd_uniclust_hits.a3m")
         bfd_sto_path = os.path.join(msa_dir, "bfd_uniclust_hits.sto")
-        subprocess.run([reformat_script, "a3m", "sto", bfd_a3m_path, bfd_sto_path],stdout=subprocess.DEVNULL)
-        print("Converted bfd_uniclust_hits.a3m to Stockholm format")
+        self.convert_a3m(infile=bfd_a3m_path, outfile=bfd_sto_path)
 
+        ## Locate individual alignments
+        bfd_path = os.path.join(msa_dir, "bfd_uniclust_hits.sto")
         mgnify_path = os.path.join(msa_dir, "mgnify_hits.sto")
         uniref90_path = os.path.join(msa_dir, "uniref90_hits.sto")
 
+        ## Parse all of the alignments
         self.msas = {
-            "bfd_hits" : AlignIO.read(bfd_sto_path, "stockholm"),
+            "bfd_hits" : AlignIO.read(bfd_path, "stockholm"),
             "mgnify_hits" : AlignIO.read(mgnify_path, "stockholm"),
             "uniref90_hits" : AlignIO.read(uniref90_path, "stockholm")
             }
