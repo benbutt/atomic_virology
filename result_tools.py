@@ -1,10 +1,11 @@
 import os
 import subprocess
 import shutil
-from typing import List, Dict
 from glob import glob
+from typing import List, Dict
 
 import pandas as pd
+import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib.ticker as ticker
 from Bio.PDB.Structure import Structure
@@ -12,7 +13,6 @@ from Bio.PDB import PDBParser, Superimposer
 from Bio.PDB.PDBIO import PDBIO
 from Bio import AlignIO
 from Bio.Align import MultipleSeqAlignment
-import numpy as np
 
 class result:
     """ 
