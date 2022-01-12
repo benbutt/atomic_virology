@@ -1,6 +1,7 @@
 import os
 import subprocess
 import shutil
+import json
 from glob import glob
 from typing import List, Dict
 
@@ -38,8 +39,14 @@ class result:
             shutil.move(raw_file, raw_dir) # Move each file to new subdirectory
         print(f"Raw AlphaFold output moved to {raw_dir}/")
 
+        ## Parse the rankings json to get the results in the correct order
+        ranking_path = os.path.join(self.path, "raw_output", "ranking_debug.json")
+        
+        with open(ranking_path) as j:    
+            ranking = json.load(j)["order"]
+
         ## Extract result pickle file for each prediction, parse and return
-        result_paths = sorted(glob(f"{self.path}/raw_output/result_model_*.pkl"))
+        result_paths = ( os.path.join(self.path, "raw_output", f"result_{rank}.pkl") for rank in ranking )
         self.results = [ pd.read_pickle(result_path) for result_path in result_paths ] # Parse each results pickle using Pandas
         print(f"Parsed {len(self.results)} results files")
         return self.results # Return full contents of results pickle as a list of dictionaries

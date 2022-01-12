@@ -6,19 +6,19 @@ def main():
     # Parse and tidy up results
     alphafold_result.get_results() # Should I put this in init?
     # Extract and plot pAE scores
-    alphafold_result.get_paes()
-    alphafold_result.plot_paes()
-    # Extract and plot pLDDT scores
-    alphafold_result.get_plddts()
-    alphafold_result.plot_plddts()
-    # Get models and superimpose them on best model
-    alphafold_result.get_models()
-    alphafold_result.superimpose_models()
+    # alphafold_result.get_paes()
+    # alphafold_result.plot_paes()
+    # # Extract and plot pLDDT scores
+    # alphafold_result.get_plddts()
+    # alphafold_result.plot_plddts()
+    # # Get models and superimpose them on best model
+    # alphafold_result.get_models()
+    # alphafold_result.superimpose_models()
 
-    # TODO: MSA handling for multimers
-    # # alphafold_result.get_msas()
-    # # alphafold_result.calculate_msa_depths()
-    # # alphafold_result.plot_msa_depth()
+    # # TODO: MSA handling for multimers
+    # # # alphafold_result.get_msas()
+    # # # alphafold_result.calculate_msa_depths()
+    # # # alphafold_result.plot_msa_depth()
 
 
 if __name__ == "__main__":
