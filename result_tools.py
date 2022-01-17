@@ -75,7 +75,8 @@ class result:
 
         ## Do the plotting
         for i, plddts in enumerate(self.plddts): # Iterate through the pLDDT arrays
-            ax.plot(range(1, len(plddts,)+1), plddts, label=f"Ranked_{i}.pdb", zorder=0-i) # Plot each array against residue number, decreasing z-order for each plot (i.e. ranked_0 on top)
+            ax.plot(range(1, len(plddts,)+1), plddts, label=f"Model {i+1}", zorder=0-i) # Plot each array against residue number, decreasing z-order for each plot (i.e. ranked_0 on top)
+            pd.DataFrame(plddts).to_csv(f"{plots_dir}/ranked_{i}_pLDDT.csv")
 
         ## Tidy up the plot
         ax.set_xlabel("Residue number")
@@ -119,14 +120,16 @@ class result:
             axs[i].set_title(f"Model {i+1}")
 
             # TODO: Wrap up in function
-            axs[i].xaxis.set_major_locator(ticker.MultipleLocator(50))
-            axs[i].xaxis.set_minor_locator(ticker.MultipleLocator(10))
+            axs[i].xaxis.set_major_locator(ticker.MultipleLocator(100))
+            axs[i].xaxis.set_minor_locator(ticker.MultipleLocator(20))
             
-            axs[i].yaxis.set_major_locator(ticker.MultipleLocator(50))
-            axs[i].yaxis.set_minor_locator(ticker.MultipleLocator(10))
+            axs[i].yaxis.set_major_locator(ticker.MultipleLocator(100))
+            axs[i].yaxis.set_minor_locator(ticker.MultipleLocator(20))
+
+            pd.DataFrame(pae).to_csv(f"{plots_dir}/ranked_{i}_pAE.csv")
             
         ## Save the plot
-        plt.savefig(f"{plots_dir}/pAEs.png", dpi=600)
+        plt.savefig(f"{plots_dir}/pAEs.png", dpi=75)
         plt.savefig(f"{plots_dir}/pAEs.svg")
         print(f"Predicted aligned error plots saved to {plots_dir}/pAEs")
 
