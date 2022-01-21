@@ -4,11 +4,11 @@ Ben Butt 2021
 Updated: Jan 2022
 """
 
-from result_tools import result
+from result_tools import Result
 
 def main():
     # Parse input dir
-    alphafold_result = result(args.result_dir)
+    alphafold_result = Result(args.result_dir)
     # Parse and tidy up results
     alphafold_result.get_results()
     # Extract scores from results pickle
