@@ -1,3 +1,9 @@
+"""
+Code for handling parsing AlphaFold 2 results, including structure alignment and plots
+Ben Butt 2021
+Updated: Jan 2022
+"""
+
 from result_tools import result
 
 def main():
