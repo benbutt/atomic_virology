@@ -10,7 +10,7 @@ import subprocess
 import shutil
 import json
 from glob import glob
-from typing import List, Dict, Tuple
+from typing import List, Dict
 
 # Third party imports
 import pandas as pd
