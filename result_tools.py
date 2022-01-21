@@ -24,7 +24,7 @@ from Bio.PDB.PDBIO import PDBIO
 from Bio.Align import MultipleSeqAlignment
 from Bio import AlignIO
 
-class result:
+class Result:
     """ 
     Class for handling raw AlphaFold outputs
     """
