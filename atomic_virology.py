@@ -4,16 +4,16 @@ def main():
     # Parse input dir
     alphafold_result = result_tools.result(args.result_dir)
     # Parse and tidy up results
-    alphafold_result.get_results() # Should I put this in init?
+    alphafold_result.get_results()
     # Extract and plot pAE scores
-    # alphafold_result.get_paes()
-    # alphafold_result.plot_paes()
-    # # Extract and plot pLDDT scores
-    # alphafold_result.get_plddts()
-    # alphafold_result.plot_plddts()
-    # # Get models and superimpose them on best model
-    # alphafold_result.get_models()
-    # alphafold_result.superimpose_models()
+    alphafold_result.get_paes()
+    alphafold_result.plot_paes()
+    # Extract and plot pLDDT scores
+    alphafold_result.get_plddts()
+    alphafold_result.plot_plddts()
+    # Get models and superimpose them on best model
+    alphafold_result.get_models()
+    alphafold_result.superimpose_models()
 
     # # TODO: MSA handling for multimers
     # # # alphafold_result.get_msas()
