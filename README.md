@@ -5,3 +5,6 @@
 - Plotting pAE matrices and pLDDT scores
 - Parsing query MSAs
 - Calculating and plotting per-residue MSA depth
+
+## General usage:
+`atomic_virology.py <result_dir>`
